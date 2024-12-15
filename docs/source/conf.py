@@ -7,9 +7,12 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'pyglshell'
+html_title = "PyglshellDoc"
 copyright = '2024, Novotorzhin Vladimir'
 author = 'Novotorzhin Vladimir'
 release = '0x01'
+#language = 'ru_RU'
+
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -17,8 +20,11 @@ release = '0x01'
 extensions = ['sphinx_rtd_theme',]
 
 templates_path = ['_templates']
-exclude_patterns = []
+exclude_patterns = ['.venv']
 
+locale_dirs = ["locale/"]
+gettext_uuid = True
+gettext_compact = False 
 
 
 # -- Options for HTML output -------------------------------------------------

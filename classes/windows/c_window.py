@@ -13,6 +13,14 @@ class Window(ABC):
         self._children: Dict[Window] = {}
 
     @property
+    def children(self) -> Dict[Window]:
+        return self._children
+    
+    @children.setter
+    def children(self, children: Dict[Window]) -> None:
+        self._children = children
+
+    @property
     def parent(self) -> Window:
         """ The parent of the window."""
         return self._parent
@@ -39,14 +47,14 @@ class Window(ABC):
         else:
             return self.parent.get_manager()
 
-    def is_exist(self, component: Window) -> bool:
-        """ Checks if the component exists in the current window. """
+    def is_exist(self, window: Window) -> bool:
+        """ Checks if the window exists in the current window. """
         if self.is_composite():
-            return component.name in self._children
+            return window.name in self._children
         else:
             return self
 
-    def is_windows_manager() -> bool:
+    def is_windows_manager(self) -> bool:
         """ Checks if the current window is a window manager. """
         return False
     
@@ -106,23 +114,37 @@ class Window(ABC):
         else:
             for _child in self._children:
                 return _child.get(_child, name)
-            
+
+    @abstractmethod        
+    def on_init(self) -> None: ...
+
     @abstractmethod
     def run(self) -> None: ...
 
 
 class WindowsManager(Window):    
-    def __init__(self):
-        self._name = 'WindowsManager'
 
-    def is_windows_manager() -> bool:
+    def __init__(self):
+        super().__init__()
+        self._name = 'WindowsManager'
+        self._window: any = None
+
+    @property
+    def window(self):
+        return self._window
+    
+    @window.setter
+    def window(self, window):
+        self._window = window
+
+    def is_windows_manager(self) -> bool:
         return True
     
     def is_composite(self) -> bool:
         return True
 
     @abstractmethod
-    def create_window(self) -> Window: ...
+    def create_window(self, name:str) -> Window: ...
 
     @abstractmethod
-    def destroy_window(self) -> None: ...
+    def destroy_window(self, name:str) -> None: ...

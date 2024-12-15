@@ -1,0 +1,287 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024, Novotorzhin Vladimir
+# This file is distributed under the same license as the pyglshell package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: pyglshell \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-12-13 11:40+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ru_RU\n"
+"Language-Team: ru_RU <LL@li.org>\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.16.0\n"
+
+#: ../../source/apireference.rst:2 8bec650afa4f4b13a457b64d64717d63
+msgid "Classes"
+msgstr "Классы"
+
+#: ../../source/apireference.rst:4 f30debc673ca4e6082c4882d2cd02394
+msgid ""
+"Classes serve as abstract structures of an object. For example, we have a"
+" class called ``Window``, and all objects of this class belong to the "
+"Window class. They have a main class, ``WindowManager``, which manages "
+"and composes these classes. This section will describe classes of this "
+"kind."
+msgstr ""
+"Классы выступают в роли абстрактных структур объекта. Например у нас"
+" есть класс  ``Window``, все объекты этого класса, имеет класс "
+" ``Window``. У них есть основной класс ``WindowManager``, который " 
+"управляет и компанует эти классы. В данном разделе будут описываться"
+" такого рода классы."
+
+
+
+#: ../../source/apireference.rst:7 06e7754b01e746609c6e7c812ba22ca8
+msgid "Window && WindowsManager"
+msgstr ""
+
+#: ../../source/apireference.rst:9 48b9a80a488644f3b347a505399ffe08
+msgid ""
+"These abstract classes describe windows and a window manager, which is "
+"needed for managing and composing windows. Thanks to these classes, we "
+"can access the main window manager and retrieve all currently open "
+"windows."
+msgstr ""
+"Данные абстрактные классы, описывают окна и менеджер окон, он нужен для "
+"управления окнами, компоновки окон, благодаря этим классом мы можем "
+"обратиться в основной менеджер окон и получить все окона которые в "
+"данный момент открыты."
+
+#: ../../source/apireference.rst:11 79edf5dafd794ff493679564895a2ca4
+msgid ""
+"In the Window class, the methods ``run`` and ``on_init`` must be defined."
+" They are necessary for initializing the window and executing specific "
+"actions or loops within it."
+msgstr ""
+"В классе ``Window``, обязательно должен быть описан метод ``run``, ``on_init``. "
+"Они нужны для инициализации окна и выполнения внутри него определенных "
+" действий, циклов."
+
+#: ../../source/apireference.rst:13 757ab536e74a4832aa8930230b95df66
+msgid ""
+"In the WindowsManager, you also need to define the methods "
+"``create_window`` and ``destroy_window`` for managing windows within the "
+"manager. This way, it's not necessary to create a new class and pass it "
+"to the WindowManager; you can directly create and initialize an object "
+"from within the WindowManager according to the manager's specifications."
+msgstr ""
+"В WindowsManager, дополнительно нужно задать метод ``create_window``, "
+"``destroy_window``. Для реализации окон внутри менеджера. Таким образом "
+"нам не обязательно создавать новый класс, передавать его в WindowsManager, "
+"можно сразу из под WindowsManager'a создать объект  про инициализировать его"
+" согласно менеджеру."
+
+#: ../../source/apireference.rst:18 719adf2b794c49258ce2e0e99e8efc4a
+msgid "Window"
+msgstr ""
+
+#: ../../source/apireference.rst:20 f2941d319ff849b98c93fe3b57ff51aa
+msgid "Abstract class, main structure for windows."
+msgstr "Абстрактный класс, основная структура для окон."
+
+#: ../../source/apireference.rst:23 ../../source/apireference.rst:74
+#: 2de85389ce5d4332a4c5b0d68bcaae88 42e1db0f630d4b258d3b9918bdefea4d
+msgid "By default:"
+msgstr "По-умолчанию:"
+
+#: ../../source/apireference.rst:25 4720923613d741f6b3e6c664c2e6f300
+msgid "``self._name = 'Window';``"
+msgstr ""
+
+#: ../../source/apireference.rst:26 9714e0cdf8fb4776b8d064d0cb4ed587
+msgid "``self._parent = self;``"
+msgstr ""
+
+#: ../../source/apireference.rst:29 6a8b79a28d194e3296a5da0688e6d0d0
+msgid "Methods"
+msgstr "Методы"
+
+#: ../../source/apireference.rst:31 1213c69517544f3fb4c107b1ae5ee947
+msgid ""
+"``get_manager():WindowManager`` - Returns the windows manager to which "
+"the current window belongs;"
+msgstr ""
+"``get_manager():WindowManager`` - Вернет родителский WindowsManager;"
+
+#: ../../source/apireference.rst:32 e3ed21bb1c5445b3a92a690471fe4eea
+msgid ""
+"``is_exist(window: Window):bool`` - Checks if the window exists in the "
+"current window;"
+msgstr ""
+"``is_exist(window: Window):bool`` - Проверяет, действительно ли существует "
+"указанное окно, в его дочерних элементах;"
+
+#: ../../source/apireference.rst:33 ccaefa4b0cd64f79a4c479379a720a32
+msgid ""
+"``is_windows_manager():bool`` - Checks if the current window is a windows"
+" manager, by default equals False;"
+msgstr ""
+"``is_windows_manager():bool`` - Проверяет является ли это окно"
+" WindowsManager'ом, по умолчанию Ложь;"
+
+#: ../../source/apireference.rst:34 852bc8dd1d434d2999860a358ec83882
+msgid ""
+"``is_composite():bool`` - Checks if the current window is composite, by "
+"default equals False;"
+msgstr ""
+"``is_composite():bool`` - Провереяет, является ли это окно, компоновщиком, "
+"по-умолчанию вернет False;"
+
+#: ../../source/apireference.rst:35 3865b0208bc846089e8ca0b88fe0cf78
+msgid ""
+"``set_nonexistant_name(window: Window, index = 1):Window`` - Sets a "
+"unique name for the window if the current name already exists. Return the"
+" window with new name."
+msgstr ""
+"``set_nonexistant_name(window: Window, index = 1):Window`` - Установит "
+"уникально наименование окну, и вернет это окно."
+
+#: ../../source/apireference.rst:36 396ff7bfa8a6412e9976cd89a079290b
+msgid ""
+"``add(window: Window):None`` - Adds a window to the collection, ensuring "
+"it has a unique name. Sets the parent of the added window to the current "
+"window."
+msgstr ""
+"``add(window: Window):None`` - Добавит в компоновщик, окно и станет его "
+"родителем. В случае если внутри него уже есть такое окно, присвоит ему "
+"уникальное имя."
+
+#: ../../source/apireference.rst:37 25a9f3e3851f488f8f1832cbee3bb656
+msgid ""
+"``remove(window: Window):None`` - Removes a specified window from the "
+"collection. If the window is found, it is deleted from the collection."
+msgstr ""
+"``remove(window: Window):None`` - Удалит окно из компоновщика "
+
+#: ../../source/apireference.rst:38 e96e46744c0a4b85943623dba0556e43
+msgid ""
+"``get(name:str):Window`` - Retrieves a window by its name from the "
+"collection. If not found, the method attempts to retrieve it from child "
+"windows recursively."
+msgstr ""
+"``get(name:str):Window`` - Возвращяает окно по именни, ищет внутри дочерних "
+"окон;"
+
+#: ../../source/apireference.rst:41 ../../source/apireference.rst:81
+#: 9fa3579e12354c6990e48fe0204f8131 fc41dfe9664b4c9cbad7672724bab31c
+msgid "Abstract Methods"
+msgstr "Абстрактные методы"
+
+#: ../../source/apireference.rst:43 cf766c1d40d345068b25a538c63a4f4d
+msgid ""
+"``on_init():None`` - This method is needed for initializing windows, such"
+" as certain parameters."
+msgstr ""
+"``on_init():None`` - Этот метод необходим для инициализации окон;"
+
+#: ../../source/apireference.rst:45 58866c3972d543659d8e8f6f99de54e6
+msgid "Why can't parameters be initialized in ``__init__()``?"
+msgstr "Почему не подходит инициализация в конструкторе ``__init__()``?"
+
+#: ../../source/apireference.rst:47 9107871c33b243b59a7bca21ec26db18
+msgid ""
+"For example, we want to obtain the window manager during initialization, "
+"but we created the object manually rather than through the windows "
+"manager. In this case, the `get_manager()` method is called during "
+"initialization, which refers to the parent and doesn't find the manager, "
+"resulting in self. To avoid this, we can first create the object, assign "
+"it to a specific window manager, and then initialize it."
+msgstr ""
+"К примеру мы хотим получить менеджер окон в инициализации, но мы создали "
+"объект не из под менеджера окон, а вручную, и вот в инициализации "
+"вызывается метод `get_manager()` он обращается к `parent` и не "
+"находит менеджер получает `self`. Чтобы такое избежать, мы можем "
+"сперва создать объект, присвоить его к определенному менджеру окон,  "
+"после чего инициализировать."
+
+#: ../../source/apireference.rst:49 916d3ea2d5fa426d9648af8053ee89c2
+msgid ""
+"``run():None`` - This method is needed for performing certain actions, "
+"and the manager can call it in a loop."
+msgstr ""
+"``run():None`` - Данный метод, необходим для выполнения каких либо действий, "
+"и может быть использован в цикле."
+
+#: ../../source/apireference.rst:52 15a5e511cf9149638dcc83d30c3c8b77
+msgid "Properties"
+msgstr "Параметры"
+
+#: ../../source/apireference.rst:54 5ed37a8c61144bf8900fc084364fe84b
+msgid "**Public:**"
+msgstr ""
+
+#: ../../source/apireference.rst:56 ec500b0c53074e50adbd919fb66eb48a
+msgid "``name:str`` - The name of the window;"
+msgstr "``name:str`` - Наименование окна;"
+
+#: ../../source/apireference.rst:57 11246d5f0dff4762a48b2b590db562f8
+msgid "``parent:Window`` - The parent of the window.;"
+msgstr "``parent:Window`` - Родитель окна;"
+
+#: ../../source/apireference.rst:59 7bfebf52f39b4b0bab238dc26f675682
+msgid "**Protected:**"
+msgstr ""
+
+#: ../../source/apireference.rst:61 6d150bb540da46139c06738484eb0879
+msgid "``_parent:Window`` - The name of the window;"
+msgstr "``_parent:Window`` - Родитель окна;"
+
+#: ../../source/apireference.rst:62 5d963cf08c14408f8ae6f5ebf0703c2d
+msgid "``_name:str`` - The name of the window;"
+msgstr "``_name:str`` - Наименование окна;"
+
+#: ../../source/apireference.rst:63 1f628032937249a2b234eca3237e1c72
+msgid "``_children: Dict[Window]`` - The children windows;"
+msgstr "``_children: Dict[Window]`` - Дочерние элементы окна;"
+
+#: ../../source/apireference.rst:67 afb7dced97d2448a82771007530a8fb2
+msgid "WindowsManager"
+msgstr ""
+
+#: ../../source/apireference.rst:69 386a089a5b514077bcb0ee0c8ec21114
+msgid ""
+"Abstract class, main structure for Windows Manager, composing window. The"
+" class inherits from the ``Window`` class."
+msgstr ""
+"Абстрактный класс, структура для менеджера, компоновщика окон. "
+" наследуется от класса ``Window``."
+
+#: ../../source/apireference.rst:71 d2cd10a49b4c4dae9198c54575f6bf06
+msgid "extends: :ref:`RST Window`"
+msgstr "Наследует: :ref:`RST Window`"
+
+#: ../../source/apireference.rst:76 bb442e0f0ef748c49130fa0225a76fb1
+msgid "``is_windows_manager() = True;``"
+msgstr ""
+
+#: ../../source/apireference.rst:77 121ee767024e4ecab003063e03caf0c1
+msgid "``is_composite() = True;``"
+msgstr ""
+
+#: ../../source/apireference.rst:78 29e7ebde03c742738e50b39e21dfce82
+msgid "``self._name = 'WindowsManager';``"
+msgstr ""
+
+#: ../../source/apireference.rst:83 b32280c183b24378b5ef5d968e0302a3
+msgid ""
+"``create_window(name:str):Window`` - Creates a new window with the "
+"specified name."
+msgstr ""
+"``create_window(name:str):Window`` - Создает новое окно. "
+
+#: ../../source/apireference.rst:84 82963ebd219449029484f4becda0c134
+msgid ""
+"``destroy_window(name:str):None`` - Destroys the window with the "
+"specified name."
+msgstr ""
+"``destroy_window(name:str):None`` - Уничтожает окно. "
+

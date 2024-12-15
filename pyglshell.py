@@ -1,18 +1,10 @@
-import pyglet
+from components.window import ComponentWindowsManager 
 
-window = pyglet.window.Window()
-label = pyglet.text.Label('Hello, world!',
-                          font_size=36,
-                          x=window.width // 2,
-                          y=window.height // 2,
-                          anchor_x='center',
-                          anchor_y='center')
+def make_window(*args, **kwargs):
+    windows_manager = ComponentWindowsManager(*args, **kwargs)
+    windows_manager.create_window()
+    windows_manager.on_init()
+    windows_manager.run()
 
-
-@window.event
-def on_draw():
-    window.clear()
-    label.draw()
-
-
-pyglet.app.run()
+if __name__ == "__main__":
+    make_window(width=512, height=512)
