@@ -1,16 +1,73 @@
 from __future__ import annotations
 from typing import Dict
 from abc import ABC, abstractmethod
+from pyglshell_types.t_vectors import VEC2, SVEC2
+from classes.windows.c_layout import Layout
+from components.layout import ComponentHorizontalStack
 
 class Window(ABC): 
     """
     Abstract base class representing a window.
     Defines the basic properties and methods that must be implemented in subclasses.
     """
-    def __init__(self, name:str = 'Window'):
-        self._name: str = name
-        self._parent: Window = self
+    def __init__(self, name:str = 'Window', size:SVEC2 = SVEC2(200,200), position:VEC2 = VEC2(0,0), anchor:str = 'left-top', size_anchor:str = 'none-none', fixed:bool = False, layout: Layout = ComponentHorizontalStack()):
+        self._name:str = name
+        self._parent:Window = self
         self._children: Dict[Window] = {}
+        self._size:SVEC2 = size
+        self._position:VEC2 = position 
+        self._anchor = anchor.split('-') # (x,y)
+        self._size_anchor = size_anchor.split('-') # (w,h)
+        self._fixed:bool = fixed
+        self._layout:Layout = layout
+
+    @property
+    def layout(self) -> Layout:
+        return self._layout
+    
+    @layout.setter
+    def layout(self, layout:Layout) -> None:
+        self._layout = layout
+
+    @property
+    def size_anchor(self) -> str:
+        return self._size_anchor
+    
+    @size_anchor.setter
+    def size_anchor(self, size_anchor:str) -> None:
+        self._size_anchor = size_anchor.split('-')
+
+    @property
+    def fixed(self) -> bool:
+        return self._fixed
+    
+    @fixed.setter
+    def fixed(self, fixed:bool) -> None:
+        self._fixed = fixed
+
+    @property
+    def anchor(self) -> str:
+        return self._anchor
+    
+    @anchor.setter
+    def anchor(self, anchor:str) -> None:
+        self._anchor = anchor.split('-')
+
+    @property
+    def size(self) -> SVEC2:
+        return self._size
+    
+    @size.setter
+    def size(self, size: SVEC2) -> None:
+        self._size = size
+
+    @property
+    def position(self) -> VEC2:
+        return self._position
+    
+    @position.setter
+    def position(self, position: VEC2) -> None:
+        self._position = position
 
     @property
     def children(self) -> Dict[Window]:
@@ -90,6 +147,7 @@ class Window(ABC):
         """
         self.set_nonexistant_name(window)
         self._children = self._children | {window.name : { 'window': window, 'name': window.name}}
+        self.layout.add(window)
         window.parent = self
     
     def remove(self, window: Window) -> None:   
@@ -115,14 +173,49 @@ class Window(ABC):
             for _child in self._children:
                 return _child.get(_child, name)
 
+    @abstractmethod
+    def on_draw(self) -> None: ...
+
+    def on_redraw(self) -> None: ...
+
+    def on_resize(self, width:int = 0, height:int = 0) -> None: ...
+
     @abstractmethod        
     def on_init(self) -> None: ...
 
     @abstractmethod
     def run(self) -> None: ...
 
+    def update_anchor_size(self) -> None: ...
 
-class WindowsManager(Window):    
+    def update_anchor(self, width, height) -> None: ...
+
+    def compositor(self) -> None: 
+        for child in self.children:
+            if (child.fixed):
+                xy_anchor = child.anchor.split('-') # 0 = x , 1 = y
+                wh_anchor = child.size_anchor.split('-') # 0 = w, 1 = h
+
+                if (wh_anchor[0]):
+                    self.height = self.height - child.height
+
+                # # full width
+                # if (wh_anchor[0]):
+                #     match xy_anchor[0]:
+                #         case 'bottom':
+                #             child.y = self.height - child.height
+                #         case 'center':
+                #             child.y = (self.height - child.height) // 2
+                
+                # if (wh_anchor[1]):
+                #     match xy_anchor[0]:
+                #         case 'right-bottom':
+                #             child.x = self.height - child.height
+                #         case 'center':
+                #             child.x = (self.height - child.height) // 2
+
+
+class WindowsManager(Window):  
 
     def __init__(self):
         super().__init__()
