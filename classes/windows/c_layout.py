@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import List
 from abc import ABC, abstractmethod
-from pyglshell_types.t_vectors import VEC2, SVEC2
+from utils.types.t_vectors import VEC2, SVEC2
 
 class Layout(ABC): 
 

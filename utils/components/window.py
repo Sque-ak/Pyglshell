@@ -3,8 +3,8 @@ import pyglet
 from classes.windows.c_window import Window, WindowsManager
 from classes.windows.c_layout import Layout
 from const import COLOR_BALANCE
-from pyglshell_types.t_colors import RGB
-from pyglshell_types.t_vectors import SVEC2, VEC2
+from utils.types.t_colors import RGB
+from utils.types.t_vectors import SVEC2, VEC2
 
 class ComponentWindow(Window): 
 

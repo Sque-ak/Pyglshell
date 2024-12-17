@@ -1,5 +1,5 @@
 from classes.windows.c_layout import Layout
-from pyglshell_types.t_vectors import VEC2, SVEC2
+from utils.types.t_vectors import VEC2, SVEC2
 
 class ComponentHorizontalStack(Layout):
 

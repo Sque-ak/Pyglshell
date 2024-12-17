@@ -1,4 +1,4 @@
-from pyglshell_types.t_colors import RGB
+from utils.types.t_colors import RGB
 
 COLOR_BALANCE = {
     'background':RGB(30,29,29),

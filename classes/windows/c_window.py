@@ -1,9 +1,10 @@
 from __future__ import annotations
 from typing import Dict
 from abc import ABC, abstractmethod
-from pyglshell_types.t_vectors import VEC2, SVEC2
+from utils.types.t_vectors import VEC2, SVEC2
+from utils.components.layout import ComponentHorizontalStack
 from classes.windows.c_layout import Layout
-from components.layout import ComponentHorizontalStack
+
 
 class Window(ABC): 
     """

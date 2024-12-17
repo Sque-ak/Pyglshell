@@ -1,8 +1,8 @@
 import random, pyglet
-from components.window import ComponentWindowsManager
-from components.layout import ComponentVerticalStack
-from pyglshell_types.t_vectors import SVEC2, VEC2
-from pyglshell_types.t_colors import RGB
+from utils.components.window import ComponentWindowsManager
+from utils.components.layout import ComponentVerticalStack
+from utils.types.t_vectors import SVEC2, VEC2
+from utils.types.t_colors import RGB
 
 def window(b_maximize=True, icon='static/favicon.ico', *args, **kwargs):
     '''
