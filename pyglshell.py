@@ -1,6 +1,6 @@
 import random, pyglet
 from utils.components.window import ComponentWindowsManager
-from utils.components.layout import ComponentVerticalStack
+from utils.components.layout import ComponentBorderStack
 from utils.types.t_vectors import SVEC2, VEC2
 from utils.types.t_colors import RGB
 
@@ -15,11 +15,17 @@ def window(b_maximize=True, icon='static/favicon.ico', *args, **kwargs):
     '''
     
     windows_manager = ComponentWindowsManager(*args, **kwargs)
-    windows_manager.layout = ComponentVerticalStack()
-    w_tools = windows_manager.create_window()
-    w_tools_file_manager = windows_manager.create_window()
-    w_tools_file_manager2 = windows_manager.create_window()
-    w_object_observer = windows_manager.create_window()
+    windows_manager.layout = ComponentBorderStack()
+    w_tools = windows_manager.create_window(anchor='north')
+    w_tools_file_manager = windows_manager.create_window(anchor='east')
+    w_status= windows_manager.create_window(anchor='south')
+    w_object_observer = windows_manager.create_window(anchor='west')
+    w_viewer = windows_manager.create_window(anchor='center')
+
+    # w_tools.background_color = RGB(255,10,50)
+    # w_tools_file_manager.background_color = RGB(10,255,50)
+    # w_status.background_color = RGB(150,255,0)
+    windows_manager.layout.on_init()
 
     if (b_maximize):
         windows_manager.window.maximize()

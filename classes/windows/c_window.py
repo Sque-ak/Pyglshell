@@ -11,14 +11,13 @@ class Window(ABC):
     Abstract base class representing a window.
     Defines the basic properties and methods that must be implemented in subclasses.
     """
-    def __init__(self, name:str = 'Window', size:SVEC2 = SVEC2(200,200), position:VEC2 = VEC2(0,0), anchor:str = 'left-top', size_anchor:str = 'none-none', fixed:bool = False, layout: Layout = ComponentHorizontalStack()):
+    def __init__(self, name:str = 'Window', size:SVEC2 = SVEC2(200,200), position:VEC2 = VEC2(0,0), anchor:str = 'north', fixed:bool = False, layout: Layout = ComponentHorizontalStack()):
         self._name:str = name
         self._parent:Window = self
         self._children: Dict[Window] = {}
         self._size:SVEC2 = size
         self._position:VEC2 = position 
-        self._anchor = anchor.split('-') # (x,y)
-        self._size_anchor = size_anchor.split('-') # (w,h)
+        self._anchor:str = anchor
         self._fixed:bool = fixed
         self._layout:Layout = layout
 
@@ -29,14 +28,6 @@ class Window(ABC):
     @layout.setter
     def layout(self, layout:Layout) -> None:
         self._layout = layout
-
-    @property
-    def size_anchor(self) -> str:
-        return self._size_anchor
-    
-    @size_anchor.setter
-    def size_anchor(self, size_anchor:str) -> None:
-        self._size_anchor = size_anchor.split('-')
 
     @property
     def fixed(self) -> bool:
@@ -52,7 +43,7 @@ class Window(ABC):
     
     @anchor.setter
     def anchor(self, anchor:str) -> None:
-        self._anchor = anchor.split('-')
+        self._anchor = anchor
 
     @property
     def size(self) -> SVEC2:
