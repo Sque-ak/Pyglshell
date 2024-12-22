@@ -1,9 +1,8 @@
-import pyglet
+import pyglet, os
 
 from classes.windows.c_window import Window, WindowsManager
-from classes.windows.c_layout import Layout
-from const import COLOR_BALANCE
-from utils.types.t_colors import RGB
+from const import STYLES
+from utils.types.t_colors import RGB,RGBA
 from utils.types.t_vectors import SVEC2, VEC2
 
 class ComponentWindow(Window): 
@@ -12,21 +11,86 @@ class ComponentWindow(Window):
         super().__init__(*args, **kwargs)
         self._batch = None
         self._background = None
-        self._background_color = COLOR_BALANCE['background']
+        self._background_color:RGB = STYLES.COLOR_BALANCE.value.BACKGROUND.value
+        self._title_background_color:RGB = STYLES.COLOR_BALANCE.value.BACKGROUND.value + 5
+        self._title_color:RGB|RGBA = STYLES.COLOR_BALANCE.value.ON_BACKGROUND.value
+        self._title:str = self.name
+        self._title_height:float = 24
+        self._title_icon = STYLES.ICONS.value.NOICON.value.icon
+        self._title_icon.width = STYLES.ICONS.value.NOICON.value.size.width
+        self._title_icon.height = STYLES.ICONS.value.NOICON.value.size.height
+        self._show_title:bool = False
 
     @property
-    def background_color(self) -> RGB:
+    def title(self) -> str:
+        return self._title
+    
+    @title.setter
+    def title(self, title:str, without_name:bool = False) -> None:
+        self._title = f'{self.name} {title}' if not without_name else title
+
+    @property
+    def show_title(self) -> bool:
+        return self._show_title
+    
+    @show_title.setter
+    def show_title(self, show_title:bool) -> None:
+        self._show_title = show_title
+
+    @property
+    def title_height(self) -> float:
+        return self._title_height
+    
+    @title_height.setter
+    def title_height(self, title_height:float) -> None:
+        self._title_height = title_height
+
+    @property
+    def title_color(self) -> RGB|RGBA:
+        return self._title_color
+    
+    @title_color.setter
+    def title_color(self, title_color:RGB|RGBA) -> None:
+        self._title_color = title_color
+
+    @property
+    def title_background_color(self) -> RGB|RGBA:
+        return self._title_background_color
+    
+    @title_background_color.setter
+    def title_background_color(self, title_background_color:RGB|RGBA) -> None:
+        self._title_background_color = title_background_color
+
+    @property
+    def title_icon(self):
+        return self._title_icon
+    
+    @ title_icon.setter
+    def title_icon(self, title_icon_path:str|pyglet.image.AbstractImage) -> None:
+        if isinstance(title_icon_path, str):
+            if os.path.isfile(title_icon_path):
+                self._title_icon = pyglet.resource.image(title_icon_path)
+        else:
+            self._title_icon = title_icon_path
+        #TODO else: SendLog('File not existd')!!!
+
+    @property
+    def background_color(self) -> RGB|RGBA:
         return self._background_color
     
     @background_color.setter
-    def background_color(self, rgb:RGB) -> None:
-        self._background_color = rgb
+    def background_color(self, color:RGB|RGBA) -> None:
+        self._background_color = color
 
     def on_draw(self) -> None: 
         self._batch.draw()
 
     def on_redraw(self) -> None:
-        self._background = pyglet.shapes.Rectangle(self.position.x, self.position.y, self.size.width, self.size.height, color=self._background_color.__repr__(), batch=self._batch)
+        self._background = pyglet.shapes.Rectangle(self.position.x, self.position.y, self.size.width, self.size.height, color=self.background_color.__repr__(), batch=self._batch)
+        if self.show_title:
+            self.title_background = pyglet.shapes.Rectangle(self.position.x, self.position.y + self.size.height - self.title_height, self.size.width, self.title_height, color=self.title_background_color.__repr__(), batch=self._batch)
+            self.title_label = pyglet.text.Label(self.title + ' Size: ' +str((self.size.x, self.size.y)) + ' Position: ' + str((self.position.x, self.position.y)), font_name=STYLES.FONT.value, color=self.title_color.__repr__(), font_size=STYLES.FONT_SIZE.value, x=self.position.x + 10 + self.title_icon.width, y=self.position.y + self.size.height - self.title_height + (self.title_height - STYLES.FONT_SIZE.value + 3) / 2, batch=self._batch)
+            self.title_label_icon = pyglet.sprite.Sprite(img=self.title_icon, x=self.position.x + 3, y=self.position.y + self.size.height - self.title_height + (self.title_height - self.title_icon.width) / 2, batch=self._batch)
 
     def get_vertix(self) -> tuple[(VEC2, VEC2, VEC2, VEC2)]:
         ''' left-top - left-bottom - right-top - right-bottom''' 

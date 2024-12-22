@@ -11,7 +11,7 @@ class Window(ABC):
     Abstract base class representing a window.
     Defines the basic properties and methods that must be implemented in subclasses.
     """
-    def __init__(self, name:str = 'Window', size:SVEC2 = SVEC2(200,200), position:VEC2 = VEC2(0,0), anchor:str = 'north', fixed:bool = False, layout: Layout = ComponentHorizontalStack()):
+    def __init__(self, name:str = 'Window', bevel:VEC2 = VEC2(15,15), min_size:SVEC2 = SVEC2(50,50), max_size:SVEC2 = SVEC2(0,0), size:SVEC2 = SVEC2(200,200), position:VEC2 = VEC2(0,0), anchor:str = 'north', fixed:bool = False, layout: Layout = ComponentHorizontalStack()):
         self._name:str = name
         self._parent:Window = self
         self._children: Dict[Window] = {}
@@ -20,6 +20,9 @@ class Window(ABC):
         self._anchor:str = anchor
         self._fixed:bool = fixed
         self._layout:Layout = layout
+        self._min_size:SVEC2 = min_size
+        self._max_size:SVEC2 = max_size
+        self._bevel:VEC2 = bevel
 
     @property
     def layout(self) -> Layout:
@@ -28,6 +31,23 @@ class Window(ABC):
     @layout.setter
     def layout(self, layout:Layout) -> None:
         self._layout = layout
+
+
+    @property
+    def min_size(self) -> SVEC2:
+        return self._min_size
+    
+    @min_size.setter
+    def min_size(self, min_size:SVEC2) -> None:
+        self._min_size= min_size
+
+    @property
+    def max_size(self) -> SVEC2:
+        return self._max_size
+    
+    @max_size.setter
+    def max_size(self, max_size:SVEC2) -> None:
+        self._max_size = max_size
 
     @property
     def fixed(self) -> bool:
@@ -88,6 +108,12 @@ class Window(ABC):
     def name(self, name: str):
         """ Sets the name of the window. """
         self._name = name
+
+    def get_min_size(self) -> SVEC2:
+        return self.min_size
+    
+    def get_max_size(self) -> SVEC2:
+        return self.max_size 
 
     def get_manager(self) -> WindowsManager:
         """Returns the window manager to which the current window belongs."""
@@ -177,35 +203,6 @@ class Window(ABC):
 
     @abstractmethod
     def run(self) -> None: ...
-
-    def update_anchor_size(self) -> None: ...
-
-    def update_anchor(self, width, height) -> None: ...
-
-    def compositor(self) -> None: 
-        for child in self.children:
-            if (child.fixed):
-                xy_anchor = child.anchor.split('-') # 0 = x , 1 = y
-                wh_anchor = child.size_anchor.split('-') # 0 = w, 1 = h
-
-                if (wh_anchor[0]):
-                    self.height = self.height - child.height
-
-                # # full width
-                # if (wh_anchor[0]):
-                #     match xy_anchor[0]:
-                #         case 'bottom':
-                #             child.y = self.height - child.height
-                #         case 'center':
-                #             child.y = (self.height - child.height) // 2
-                
-                # if (wh_anchor[1]):
-                #     match xy_anchor[0]:
-                #         case 'right-bottom':
-                #             child.x = self.height - child.height
-                #         case 'center':
-                #             child.x = (self.height - child.height) // 2
-
 
 class WindowsManager(Window):  
 

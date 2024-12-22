@@ -1,5 +1,5 @@
 from classes.windows.c_layout import Layout
-from utils.types.t_vectors import VEC2, SVEC2
+from utils.types.t_vectors import VEC2, SVEC2, GRID4
 
 class ComponentHorizontalStack(Layout):
 
@@ -8,33 +8,59 @@ class ComponentHorizontalStack(Layout):
         self._bevel:VEC2 = bevel
         self._margin:VEC2 = margin
         
+    def on_init(self) -> None: ...
+
     def get_min_size(self) -> SVEC2:
-        self._min_size = self.position + SVEC2(self._bevel.x, self._bevel.y)
-        return SVEC2(self._min_size.x, self._min_size.y)
+        return self.min_size
 
     def get_max_size(self) -> SVEC2:
-        self._max_size = self.size - SVEC2(self._bevel.x*2, self._bevel.y*2)
-        return SVEC2(self._max_size.x, self._max_size.y)
+        self.max_size = self.size - SVEC2(self._bevel.x*2, self._bevel.y*2)
+        return SVEC2(self.max_size.x, self.max_size.y)
 
-    def do_layout(self):
-
+    def do_layout(self) -> None:
         if len(self.children) > 0:
-
-            if not (self.parent):
+            if not self.parent:
                 manager = self.children[0].get_manager()
-                self.position = VEC2(0,0)
+                self.position = VEC2(0, 0)
                 self.size = manager.size
 
-            self._min_size = self.get_min_size()
-            self._max_size = self.get_max_size()
+            self.max_size = self.get_max_size()
+            __len_children = len(self.children)
 
-            len_children = len(self.children)
+            # Calculate total space occupied by fixed-size windows
+            __fixed_width_total = sum(child.min_size.x for child in self.children)
 
-            for index, child in enumerate(self.children):
+            # Calculate remaining width for flexible children
+            __remaining_width = max(self.size.x - __fixed_width_total - self._margin.x * (__len_children - 1), 0) - self._bevel.x * 2
 
-                child.size = SVEC2((self._max_size.width - (self._margin.x * (len_children - 1)))/len_children, self._max_size.height)
-                child.position = VEC2((self._min_size.x + (index*(child.size.width + self._margin.y))), self._min_size.y)
+            # Determine the flexible children based on current size constraints
+            __flexible_children = [child for child in self.children if (((child.size.x >= child.min_size.x) or child.min_size.x == 0) and child.max_size.x == 0)]
 
+            # Calculate flexible width only for flexible children
+            if __flexible_children:
+                __flexible_width = (__remaining_width / len(__flexible_children))
+            else:
+                __flexible_width = __remaining_width / 1
+
+            # Set sizes and positions for each child
+            __current_x = self.position.x + self._bevel.x # Start from the left, considering left bevel
+
+            for child in self.children:
+                # Calculate the width for each child considering min and max constraints
+                if child in __flexible_children:
+                    __child_width = max(child.min_size.x, child.min_size.x + __flexible_width)
+                else:
+                    __child_width = child.min_size.x
+                    if child.max_size.x > 0:
+                        __child_width = min(__child_width, child.max_size.x)
+
+                # Update the current position accounting for the margin
+                child.size = SVEC2(__child_width, self.max_size.y)
+                child.position = VEC2(__current_x, self.position.y + self._bevel.y)
+
+                # Move right by the width of the current element and add margin
+                __current_x += __child_width
+                __current_x += self._margin.x
 
 
 class ComponentVerticalStack(Layout):
@@ -44,46 +70,86 @@ class ComponentVerticalStack(Layout):
         self._bevel:VEC2 = bevel
         self._margin:VEC2 = margin
         
+    def on_init(self) -> None: ...
+
     def get_min_size(self) -> SVEC2:
-        self._min_size = self.position + SVEC2(self._bevel.x, self._bevel.y)
-        return SVEC2(self._min_size.x, self._min_size.y)
+        return self.min_size
 
     def get_max_size(self) -> SVEC2:
-        self._max_size = self.size - SVEC2(self._bevel.x*2, self._bevel.y*2)
-        return SVEC2(self._max_size.x, self._max_size.y)
+        self.max_size = self.size - SVEC2(self._bevel.x*2, self._bevel.y*2)
+        return SVEC2(self.max_size.x, self.max_size.y)
 
     def do_layout(self) -> None:
-
         if len(self.children) > 0:
-
-            if not (self.parent):
+            if not self.parent:
                 manager = self.children[0].get_manager()
-                self.position = VEC2(0,0)
+                self.position = VEC2(0, 0)
                 self.size = manager.size
 
-            self._min_size = self.get_min_size()
-            self._max_size = self.get_max_size()
+            self.max_size = self.get_max_size()
+            __len_children = len(self.children)
 
-            len_children = len(self.children)
+            # Calculate total space occupied by fixed-size windows
+            __fixed_height_total = sum(child.min_size.y for child in self.children)
 
-            for index, child in enumerate(self.children):
+            # Calculate remaining height for flexible children
+            __remaining_height = max(self.size.y - __fixed_height_total - self._margin.y * (__len_children - 1), 0) - self._bevel.y *2
 
-                child.size = SVEC2(self._max_size.width, (self._max_size.height - (self._margin.x * (len_children - 1)))/len_children)
-                child.position = VEC2(self._min_size.x, self._min_size.y  + (index*(child.size.height + self._margin.y)))
+            # Determine the flexible children based on current size constraints
+            __flexible_children = [child for child in self.children if (((child.size.y >= child.min_size.y) or child.min_size.y == 0) and child.max_size.y == 0)]
+
+            # Calculate flexible height only for flexible children
+            if __flexible_children:
+                __flexible_height = (__remaining_height / len(__flexible_children))
+            else:
+                __flexible_height = __remaining_height / 1
+
+            # Set sizes and positions for each child
+            __current_y = self.size.y - self._bevel.y  # Start from the bottom, considering bottom bevel
+
+            for child in self.children:
+                # Calculate the height for each child considering min and max constraints
+                if child in __flexible_children:
+                    __child_height = max(child.min_size.y, child.min_size.y + __flexible_height)
+                else:
+                    __child_height = child.min_size.y
+                    if child.max_size.y > 0:
+                        __child_height = min(__child_height, child.max_size.y)
+
+                # Update the current position accounting for the margin
+                __current_y -= __child_height
+                child.size = SVEC2(self.max_size.x, __child_height)
+                child.position = VEC2(self.position.x + self._bevel.x, __current_y + self.position.y)
+                    
+                __current_y -= self._margin.y
+
 
 class ComponentBorderStack(Layout):
 
-    def __init__(self, north_height:int = 64, south_height:int = 64, *args, **kwargs):
+    def __init__(self, bevel:VEC2 = VEC2(5,5), margin:VEC2 = VEC2(5,5), grid:GRID4 = GRID4(480,480,50,50), *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._north = ComponentVerticalStack(bevel=VEC2(5,5), margin=VEC2(5,5))
-        self._center = ComponentHorizontalStack(bevel=VEC2(5,0), margin=VEC2(5,5))
-        self._south = ComponentVerticalStack(bevel=VEC2(5,5), margin=VEC2(5,5))
+        self._north = ComponentVerticalStack(bevel=VEC2(bevel.x,bevel.y), margin=VEC2(margin.x,margin.y))
+        self._center = ComponentVerticalStack(bevel=VEC2(0,0), margin=VEC2(margin.x,margin.y))
+        self._south = ComponentVerticalStack(bevel=VEC2(bevel.x,bevel.y), margin=VEC2(margin.x,margin.y))
+        self._west = ComponentVerticalStack(bevel=VEC2(bevel.x,0), margin=VEC2(margin.x,margin.y))
+        self._east = ComponentVerticalStack(bevel=VEC2(bevel.x,0), margin=VEC2(margin.x,margin.y))
         self._north.parent = self
         self._center.parent = self
         self._south.parent = self
-        self._north_height = north_height
-        self._south_height = south_height
+        self._west.parent = self.center
+        self._east.parent = self.center
+        self._grid = grid
+        self._bevel = bevel
+        self._margin = margin
 
+    @property
+    def grid(self) -> GRID4:
+        return self._grid
+    
+    @grid.setter
+    def grid(self, grid:GRID4):
+        self._grid = grid
+                
     @property
     def north(self) -> ComponentVerticalStack:
         return self._north
@@ -95,65 +161,94 @@ class ComponentBorderStack(Layout):
     @property
     def south(self) -> ComponentVerticalStack:
         return self._south
+    
+    @property
+    def west(self) -> ComponentVerticalStack:
+        return self._west
+    
+    @property
+    def east(self) -> ComponentVerticalStack:
+        return self._east
         
     def get_min_size(self) -> SVEC2:
-        self._min_size = self.position
-        return SVEC2(self._min_size.x, self._min_size.y)
+        self.min_size = self.position
+        return SVEC2(self.min_size.x, self.min_size.y)
 
     def get_max_size(self) -> SVEC2:
         self._max_size = self.size
-        return SVEC2(self._max_size.x, self._max_size.y)
+        return SVEC2(self.max_size.x, self.max_size.y)
 
     def on_init(self) -> None: 
-        if len(self.children) > 0:
-            __west = []
-            __center = []
-            __east = []
 
-            for child in self._children:
-                match child.anchor:
-                    case 'north':
-                        self.north.add(child)
-                    case 'center':
-                        __center.append(child)
-                    case 'west':
-                        __west.append(child)
-                    case 'east':
-                        __east.append(child)
-                    case 'south':
-                        self.south.add(child)
+        for child in self._children:
+            match child.anchor:
+                case 'north':
+                    self.north.add(child)
+                case 'center':
+                    self.center.add(child)
+                case 'west':
+                    self.west.add(child)
+                case 'east':
+                    self.east.add(child)
+                case 'south':
+                    self.south.add(child)
 
-            for west in __west:
-                self.center.add(west)
-            
-            for center in __center:
-                self.center.add(center)
-
-            for east in __east:
-                self.center.add(east)
 
     def do_layout(self) -> None:
-
-        if not (self.parent):
+        if not self.parent:
             manager = self.children[0].get_manager()
-            self.position = VEC2(0,0)
+            self.position = VEC2(0, 0)
             self.size = manager.size
 
-        self.north.position = VEC2(self.position.x, self.position.y)
-        self.north.size = SVEC2(self.size.x, self._north_height)
+        # Calculate grid sizes for each region
+        __grid_size = GRID4(
+            max(self.west.get_min_size().x, self.grid.west) if len(self.west.children) > 0 else self._bevel.x,
+            max(self.east.get_min_size().x, self.grid.east) if len(self.east.children) > 0 else self._bevel.x,
+            max(self.north.get_min_size().y, self.grid.north) if len(self.north.children) > 0 else self._bevel.y,
+            max(self.south.get_min_size().y, self.grid.south) if len(self.south.children) > 0 else self._bevel.y
+        )
 
-        self.south.position = VEC2(self.position.x, self.size.y - self._south_height)
-        self.south.size = SVEC2(self.size.x, self._south_height)
+        # Calculate available space for center
+        __total_vertical_space = self.size.y - __grid_size.north - __grid_size.south
+        __total_horizontal_space = self.size.x - __grid_size.west - __grid_size.east
 
-        self.center.position = VEC2(self.position.x, self.position.y + self._north_height)
-        self.center.size = SVEC2(self.size.x, self.size.y - self._north_height - self._south_height)
+        # Ensure north and south do not exceed available vertical space
+        if __total_vertical_space < 0:
+            __grid_size.north = self.size.y / 2
+            __grid_size.south = self.size.y / 2
+            __total_vertical_space = 0
 
+        # Ensure west and east do not exceed available horizontal space
+        if __total_horizontal_space < 0:
+            __grid_size.west = self.size.x / 2
+            __grid_size.east = self.size.x / 2
+            __total_horizontal_space = 0
+
+        # Position and size north
+        self.north.position = VEC2(self.position.x, self.position.y + self.size.y - __grid_size.north)
+        self.north.size = SVEC2(self.size.x, __grid_size.north)
+
+        # Position and size south
+        self.south.position = VEC2(self.position.x, self.position.y)
+        self.south.size = SVEC2(self.size.x, __grid_size.south)
+
+        # Position and size west
+        self.west.position = VEC2(self.position.x, self.position.y + __grid_size.south)
+        self.west.size = SVEC2(__grid_size.west, __total_vertical_space - (self._bevel.y * 2 if len(self.north.children) > 0 else 0))
+
+        # Position and size east
+        self.east.position = VEC2(self.position.x + self.size.x - __grid_size.east, self.position.y + __grid_size.south)
+        self.east.size = SVEC2(__grid_size.east, __total_vertical_space - (self._bevel.y * 2 if len(self.north.children) > 0 else 0))
+
+        # Ensure center takes all available space
+        if len(self.center.children) > 0:
+            self.center.position = VEC2(self.position.x + __grid_size.west, self.position.y + __grid_size.south)
+            self.center.size = SVEC2(__total_horizontal_space, __total_vertical_space - (self._bevel.y * 2 if len(self.north.children) > 0 else 0))
+
+        # Layout all regions
         self.north.do_layout()
         self.center.do_layout()
         self.south.do_layout()
+        self.west.do_layout()
+        self.east.do_layout()
 
-            
-                        
-
-                
-        

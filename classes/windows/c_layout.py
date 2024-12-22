@@ -47,11 +47,19 @@ class Layout(ABC):
 
     @property
     def min_size(self) -> SVEC2:
-        return self.min_size
+        return self._min_size
     
     @min_size.setter
     def min_size(self, min_size:SVEC2) -> None:
         self._min_size = min_size
+
+    @property
+    def max_size(self) -> SVEC2:
+        return self._max_size
+    
+    @max_size.setter
+    def max_size(self, max_size:SVEC2) -> None:
+        self._max_size = max_size
 
     def add(self, element:ABC) -> None:
         if element not in self._children:

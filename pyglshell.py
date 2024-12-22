@@ -1,8 +1,9 @@
 import random, pyglet
 from utils.components.window import ComponentWindowsManager
-from utils.components.layout import ComponentBorderStack
+from utils.components.layout import ComponentBorderStack, ComponentVerticalStack, ComponentHorizontalStack
 from utils.types.t_vectors import SVEC2, VEC2
 from utils.types.t_colors import RGB
+from const import STYLES
 
 def window(b_maximize=True, icon='static/favicon.ico', *args, **kwargs):
     '''
@@ -15,16 +16,53 @@ def window(b_maximize=True, icon='static/favicon.ico', *args, **kwargs):
     '''
     
     windows_manager = ComponentWindowsManager(*args, **kwargs)
-    windows_manager.layout = ComponentBorderStack()
-    w_tools = windows_manager.create_window(anchor='north')
-    w_tools_file_manager = windows_manager.create_window(anchor='east')
-    w_status= windows_manager.create_window(anchor='south')
-    w_object_observer = windows_manager.create_window(anchor='west')
-    w_viewer = windows_manager.create_window(anchor='center')
+    windows_manager.window.set_minimum_size(800, 600)
 
-    # w_tools.background_color = RGB(255,10,50)
-    # w_tools_file_manager.background_color = RGB(10,255,50)
-    # w_status.background_color = RGB(150,255,0)
+    windows_manager.layout = ComponentBorderStack()
+    windows_manager.layout.center.min_size = SVEC2(320,480)
+    windows_manager.layout.east.min_size = SVEC2(0,0)
+    windows_manager.layout.west.min_size = SVEC2(0,0)
+
+
+    w_viewer = windows_manager.create_window(name='Viewer', anchor='center')
+    w_console = windows_manager.create_window(name='Console', anchor='center')
+    w_tools = windows_manager.create_window(name='Tools',  anchor='north')
+    w_file_manager = windows_manager.create_window(name='File Manager', anchor='east')
+    w_status= windows_manager.create_window(name='Status aplet', anchor='south')
+    w_object_observer = windows_manager.create_window(name='Inspector', anchor='west')
+    
+
+    w_object_observer.show_title = True
+    # w_status.show_title = True
+    # w_tools.show_title = True
+
+    #CONSOLE WINDOW
+    w_console.show_title = True
+    w_console.title_icon = STYLES.ICONS.value.CONSOLE.value.icon
+    w_console.title_icon.width = STYLES.ICONS.value.CONSOLE.value.size.width
+    w_console.title_icon.height = STYLES.ICONS.value.CONSOLE.value.size.height
+    w_console.min_size = SVEC2(100,200)
+
+    # FILEMANAGER WINDOW
+    w_file_manager.show_title = True
+    w_file_manager.title_icon = STYLES.ICONS.value.FILEMANAGER.value.icon
+    w_file_manager.title_icon.width = STYLES.ICONS.value.FILEMANAGER.value.size.width
+    w_file_manager.title_icon.height = STYLES.ICONS.value.FILEMANAGER.value.size.height
+
+    # VIEWER WINDOW
+    w_viewer.show_title = True
+    w_viewer.title_icon = STYLES.ICONS.value.OBSERVER.value.icon
+    w_viewer.title_icon.width = STYLES.ICONS.value.OBSERVER.value.size.width
+    w_viewer.title_icon.height = STYLES.ICONS.value.OBSERVER.value.size.height
+    w_viewer.min_size = SVEC2(800,400)
+
+
+    #STATUSBAR
+    w_status.min_size = SVEC2(15,15)
+
+    #w_viewer.background_color = RGB(255,10,50)
+    #w_file_manager.background_color = RGB(10,255,50)
+    #w_object_observer.background_color = RGB(150,255,0)
     windows_manager.layout.on_init()
 
     if (b_maximize):
