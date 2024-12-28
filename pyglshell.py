@@ -16,7 +16,7 @@ def window(b_maximize=True, icon='static/favicon.ico', *args, **kwargs):
     '''
     
     windows_manager = ComponentWindowsManager(*args, **kwargs)
-    windows_manager.window.set_minimum_size(800, 600)
+    windows_manager.window.set_minimum_size(800, 720)
 
     windows_manager.layout = ComponentBorderStack()
     windows_manager.layout.center.min_size = SVEC2(320,480)

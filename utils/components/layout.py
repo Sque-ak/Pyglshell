@@ -2,7 +2,23 @@ from classes.windows.c_layout import Layout
 from utils.types.t_vectors import VEC2, SVEC2, GRID4
 
 class ComponentHorizontalStack(Layout):
+    '''
+        The `ComponentHorizontalStack` class is a layout component that arranges child components in a horizontal stack. It uses the `Layout` base class to provide the core layout functionality.
+        
+        The class has the following key features:
+        
+        - Supports setting the bevel and margin sizes for the layout.
+        - Provides methods to calculate the minimum and maximum size of the layout.
+        - The `do_layout()` method is responsible for positioning and sizing the child components based on the available space and the constraints of the layout.
+        - It determines the flexible and fixed-size children, and calculates the flexible width to distribute the remaining space accordingly.
+        - The child components are positioned and sized starting from the left of the layout, considering the bevel and margin.
 
+        Args:
+            bevel (VEC2, optional): The bevel size for the layout. Defaults to VEC2(15, 15).
+            margin (VEC2, optional): The margin size for the layout. Defaults to VEC2(25, 25).
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+    '''
     def __init__(self, bevel:VEC2 = VEC2(15,15), margin:VEC2 = VEC2(25,25), *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._bevel:VEC2 = bevel
@@ -64,7 +80,23 @@ class ComponentHorizontalStack(Layout):
 
 
 class ComponentVerticalStack(Layout):
+    '''
+        The `ComponentVerticalStack` class is a layout component that arranges child components in a vertical stack. It uses the `Layout` base class to provide the core layout functionality.
+        
+        The class has the following key features:
+        
+        - Supports setting the bevel and margin sizes for the layout.
+        - Provides methods to calculate the minimum and maximum size of the layout.
+        - The `do_layout()` method is responsible for positioning and sizing the child components based on the available space and the constraints of the layout.
+        - It determines the flexible and fixed-size children, and calculates the flexible height to distribute the remaining space accordingly.
+        - The child components are positioned and sized starting from the bottom of the layout, considering the bevel and margin.
 
+        Args:
+            bevel (VEC2, optional): The bevel size for the layout. Defaults to VEC2(15, 15).
+            margin (VEC2, optional): The margin size for the layout. Defaults to VEC2(25, 25).
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+    '''   
     def __init__(self, bevel:VEC2 = VEC2(15,15), margin:VEC2 = VEC2(25,25), *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._bevel:VEC2 = bevel
@@ -125,6 +157,19 @@ class ComponentVerticalStack(Layout):
 
 
 class ComponentBorderStack(Layout):
+    '''
+        The `ComponentBorderStack` class is a layout component that arranges child components in a border layout, with a north, south, west, east, and center region.
+        It uses `ComponentVerticalStack` instances to manage the layout of the child components in each region. 
+        The class provides properties to access the individual regions, as well as methods to calculate the minimum and maximum size of the layout. 
+        The `do_layout()` method is responsible for positioning and sizing the child components based on the available space and the constraints of the layout.
+
+        Args:
+            bevel (VEC2, optional): The bevel size for the layout. Defaults to VEC2(5,5).
+            margin (VEC2, optional): The margin size for the layout. Defaults to VEC2(5,5).
+            grid (GRID4, optional): The grid size for the layout. Defaults to GRID4(480,480,50,50).
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+    '''
 
     def __init__(self, bevel:VEC2 = VEC2(5,5), margin:VEC2 = VEC2(5,5), grid:GRID4 = GRID4(480,480,50,50), *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -180,7 +225,7 @@ class ComponentBorderStack(Layout):
 
     def on_init(self) -> None: 
 
-        for child in self._children:
+        for child in self.children:
             match child.anchor:
                 case 'north':
                     self.north.add(child)

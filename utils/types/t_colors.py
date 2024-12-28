@@ -1,5 +1,14 @@
+from pydantic_core import core_schema
 
 class RGB:
+    '''
+    Represents an RGB color value. Provides methods for performing arithmetic operations on RGB values, such as addition and subtraction.
+    Args:
+        r (int): The red component of the color value.
+        g (int): The green component of the color value.
+        b (int): The blue component of the color value.
+    '''
+
     def __init__(self, r: int, g: int, b: int):
         self.r = r
         self.g = g
@@ -35,6 +44,7 @@ class RGB:
             )
         raise TypeError("Subtraction only supported between RGB and RGB/RGBA/int instances")
     
+
     def __add__(self, other):
         if isinstance(other, RGB):
             return RGB(
@@ -56,8 +66,29 @@ class RGB:
                 min(255, self.b + other),
             )
         raise TypeError("Addition only supported between RGB and RGB/RGBA/int instances")
+    
+    def __get_pydantic_core_schema__(self, handler):
+        return core_schema.typed_dict_schema({
+                'r': core_schema.typed_dict_field(core_schema.int_schema()),
+                'g': core_schema.typed_dict_field(core_schema.int_schema()),
+                'b': core_schema.typed_dict_field(core_schema.int_schema()),
+            })
 
 class RGBA:
+    '''
+    Represents an RGBA color with 8-bit integer values for the red, green, blue, and alpha (transparency) channels.
+    
+    The RGBA class provides methods for performing arithmetic operations on RGBA colors, such as addition and subtraction. 
+    These operations are defined to handle different input types (RGB, RGBA, integers) and ensure the resulting values are clamped to the valid range of 0-255.
+    The class also includes a method to generate a Pydantic core schema for the RGBA type, which can be used for data validation and serialization.
+
+    Args:
+        r (int): The red component of the color value.
+        g (int): The green component of the color value.
+        b (int): The blue component of the color value.
+        a (int): The alpha (transparency) component of the color value.
+    '''
+        
     def __init__(self, r: int, g: int, b: int, a: int):
         self.r = r
         self.g = g
@@ -134,3 +165,11 @@ class RGBA:
                 min(255, self.a + other[1])
             )
         raise TypeError("Addition only supported between RGBA and RGB/RGBA/int or (int:rgb/int:alpha) instances")
+    
+    def __get_pydantic_core_schema__(self, handler):
+        return core_schema.typed_dict_schema({
+                'r': core_schema.typed_dict_field(core_schema.int_schema()),
+                'g': core_schema.typed_dict_field(core_schema.int_schema()),
+                'b': core_schema.typed_dict_field(core_schema.int_schema()),
+                'a': core_schema.typed_dict_field(core_schema.int_schema()),
+            })

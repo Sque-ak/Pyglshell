@@ -1,113 +1,61 @@
-from __future__ import annotations
-from typing import Dict
-from abc import ABC, abstractmethod
-from utils.types.t_vectors import VEC2, SVEC2
-from utils.components.layout import ComponentHorizontalStack
+from pydantic import BaseModel, Field
+from pyglet.clock import Clock
+from utils.types.t_vectors import SVEC2, VEC2
 from classes.windows.c_layout import Layout
+from utils.components.layout import ComponentHorizontalStack
+import random
+from abc import ABC, abstractmethod
 
-
-class Window(ABC): 
+class Window(ABC, BaseModel):
     """
-    Abstract base class representing a window.
-    Defines the basic properties and methods that must be implemented in subclasses.
+    The `Window` class is an abstract base class that represents a window in a graphical user interface. It provides a set of properties and methods for managing the window's appearance, behavior, and layout.
+
+    The class has the following key features:
+
+    - Support for parent-child relationships between windows, allowing for the creation of complex window hierarchies.
+    - Configurable size, position, anchor, and layout properties.
+    - Methods for checking the existence of a window, determining if it is a window manager or composite, and setting a unique name for a window.
+    - Methods for adding and removing windows from the window collection, as well as retrieving windows by name.
+    - Abstract methods for drawing, initializing, and running the window, which must be implemented by concrete subclasses.
+
+    The `Window` class is designed to be extended by specific window implementations, which can override the abstract methods and customize the window's behavior as needed.
     """
-    def __init__(self, name:str = 'Window', bevel:VEC2 = VEC2(15,15), min_size:SVEC2 = SVEC2(50,50), max_size:SVEC2 = SVEC2(0,0), size:SVEC2 = SVEC2(200,200), position:VEC2 = VEC2(0,0), anchor:str = 'north', fixed:bool = False, layout: Layout = ComponentHorizontalStack()):
-        self._name:str = name
-        self._parent:Window = self
-        self._children: Dict[Window] = {}
-        self._size:SVEC2 = size
-        self._position:VEC2 = position 
-        self._anchor:str = anchor
-        self._fixed:bool = fixed
-        self._layout:Layout = layout
-        self._min_size:SVEC2 = min_size
-        self._max_size:SVEC2 = max_size
-        self._bevel:VEC2 = bevel
+    def generate_name(self)-> str:
+        NAMES = [
+            "WackyWindow",
+            "JollyWindow",
+            "BouncyWindow",
+            "CheeryWindow",
+            "SnazzyWindow",
+            "ZippyWindow",
+            "QuirkyWindow",
+            "PeppyWindow",
+            "GigglyWindow",
+            "WhimsicalWindow",
+            "FunkyWindow",
+            "BreezyWindow",
+            "ChirpyWindow",
+            "PerkyWindow",
+            "SpunkyWindow"
+        ]
+        return random.choice(NAMES)
 
-    @property
-    def layout(self) -> Layout:
-        return self._layout
-    
-    @layout.setter
-    def layout(self, layout:Layout) -> None:
-        self._layout = layout
+    name:str = Field(default_factory=generate_name)
+    parent: 'Window' = None
+    children: 'Window' = {}
+    size: SVEC2 = SVEC2(200,200)
+    position:VEC2 = VEC2(0,0)
+    anchor:str = 'north'
+    fixed:bool = True
+    layout:'Layout' = ComponentHorizontalStack()
+    min_size:SVEC2 = SVEC2(50,50)
+    max_size:SVEC2 = SVEC2(0,0)
+    bevel:VEC2 = VEC2(15,15)
 
-
-    @property
-    def min_size(self) -> SVEC2:
-        return self._min_size
-    
-    @min_size.setter
-    def min_size(self, min_size:SVEC2) -> None:
-        self._min_size= min_size
-
-    @property
-    def max_size(self) -> SVEC2:
-        return self._max_size
-    
-    @max_size.setter
-    def max_size(self, max_size:SVEC2) -> None:
-        self._max_size = max_size
-
-    @property
-    def fixed(self) -> bool:
-        return self._fixed
-    
-    @fixed.setter
-    def fixed(self, fixed:bool) -> None:
-        self._fixed = fixed
-
-    @property
-    def anchor(self) -> str:
-        return self._anchor
-    
-    @anchor.setter
-    def anchor(self, anchor:str) -> None:
-        self._anchor = anchor
-
-    @property
-    def size(self) -> SVEC2:
-        return self._size
-    
-    @size.setter
-    def size(self, size: SVEC2) -> None:
-        self._size = size
-
-    @property
-    def position(self) -> VEC2:
-        return self._position
-    
-    @position.setter
-    def position(self, position: VEC2) -> None:
-        self._position = position
-
-    @property
-    def children(self) -> Dict[Window]:
-        return self._children
-    
-    @children.setter
-    def children(self, children: Dict[Window]) -> None:
-        self._children = children
-
-    @property
-    def parent(self) -> Window:
-        """ The parent of the window."""
-        return self._parent
-    
-    @parent.setter
-    def parent(self, parent: Window) -> None:
-        """ Are you can sets the new parent of the window. """
-        self._parent = parent
-
-    @property
-    def name(self) -> str:
-        """ The name of the window. """
-        return self._name
-    
-    @name.setter
-    def name(self, name: str):
-        """ Sets the name of the window. """
-        self._name = name
+    def __init__(self, **data):
+        super().__init__(**data)
+        if self.parent is None:
+            self.parent = self
 
     def get_min_size(self) -> SVEC2:
         return self.min_size
@@ -115,14 +63,14 @@ class Window(ABC):
     def get_max_size(self) -> SVEC2:
         return self.max_size 
 
-    def get_manager(self) -> WindowsManager:
+    def get_manager(self) -> 'WindowsManager':
         """Returns the window manager to which the current window belongs."""
         if self.is_windows_manager() or self.parent == self:
             return self
         else:
             return self.parent.get_manager()
 
-    def is_exist(self, window: Window) -> bool:
+    def is_exist(self, window: 'Window') -> bool:
         """ Checks if the window exists in the current window. """
         if self.is_composite():
             return window.name in self._children
@@ -137,14 +85,14 @@ class Window(ABC):
         """ Checks if the current window is composite. """
         return False
     
-    def set_nonexistant_name(self, window: Window, index = 1) -> Window:
+    def set_nonexistant_name(self, window: 'Window', index = 1) -> 'Window':
         """ Sets a unique name for the window if the current name already exists.
 
             :param window: The window for which the name is being set.
             :param index: Index for name uniqueness.
             :return: The window with a unique name.
          """
-        if window.name in self._children:
+        if window.name in self.children:
             _name = window.name.split('_')
 
             if _name[-1].isdigit():
@@ -158,37 +106,37 @@ class Window(ABC):
         else:
             return window
     
-    def add(self, window: Window) -> None:
+    def add(self, window: 'Window') -> None:
         """
         Adds a window to the collection, ensuring it has a unique name.
         Sets the parent of the added window to the current window.
         """
         self.set_nonexistant_name(window)
-        self._children = self._children | {window.name : { 'window': window, 'name': window.name}}
+        self.children = self.children | {window.name : { 'window': window, 'name': window.name}}
         self.layout.add(window)
         window.parent = self
     
-    def remove(self, window: Window) -> None:   
+    def remove(self, window: 'Window') -> None:   
         """
         Removes a specified window from the collection.
         If the window is found, it is deleted from the collection.
         """     
-        if self._children[window.name]:
-            del self._children[window.name]
+        if self.children[window.name]:
+            del self.children[window.name]
             window.parent = window
 
-    def get(self, name:str) -> Window:
+    def get(self, name:str) -> 'Window':
         """
         Retrieves a window by its name from the collection.
         If not found, the method attempts to retrieve it from child windows recursively.
         """
-        if len(self._children) == 0:
+        if len(self.children) == 0:
             return None
         
-        if self._children[name]:
-            return self._children[name]['window']
+        if self.children[name]:
+            return self.children[name]['window']
         else:
-            for _child in self._children:
+            for _child in self.children:
                 return _child.get(_child, name)
 
     @abstractmethod
@@ -204,26 +152,43 @@ class Window(ABC):
     @abstractmethod
     def run(self) -> None: ...
 
-class WindowsManager(Window):  
 
-    def __init__(self):
-        super().__init__()
-        self._name = 'WindowsManager'
-        self._window: any = None
+class WindowsManager(Window): 
+    '''
+    The `WindowsManager` class is responsible for managing a collection of windows. 
+    It provides methods to add, remove, and retrieve windows by name, as well as handle events such as drawing, redrawing, and resizing. 
+    The class also includes utility methods like `generate_name()` to generate unique window names, and properties to store a `BaseModel` and a `Clock` instance.
+    '''
+    def generate_name(self):
+        NAMES = [
+            "WindowsManager",
+            "FunnyWindowsManager",
+            "WackyWindowsManager",
+            "JollyWindowsManager",
+            "BouncyWindowsManager",
+            "CheeryWindowsManager",
+            "SnazzyWindowsManager",
+            "ZippyWindowsManager",
+            "QuirkyWindowsManager",
+            "PeppyWindowsManager",
+            "GigglyWindowsManager",
+            "WhimsicalWindowsManager",
+        ]
+        return random.choice(NAMES)
 
-    @property
-    def window(self):
-        return self._window
-    
-    @window.setter
-    def window(self, window):
-        self._window = window
+    window: BaseModel = None
+    clock: Clock = None
+
+    class Config:
+        arbitrary_types_allowed = True
 
     def is_windows_manager(self) -> bool:
+        # This is element is window manager
         return True
     
     def is_composite(self) -> bool:
         return True
+    
 
     @abstractmethod
     def create_window(self, name:str) -> Window: ...
